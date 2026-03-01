@@ -1,0 +1,65 @@
+{
+  "name": "ax-cite",
+  "version": "1.0.0",
+  "description": "Ultra-lightweight web component for AI-extractable citation blocks. Part of the AX (AI Agent Experience) ecosystem.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Lucio Duran <email@lucioduran.com> (https://lucioduran.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucioduran/ax-cite.git"
+  },
+  "homepage": "https://github.com/lucioduran/ax-cite#readme",
+  "bugs": {
+    "url": "https://github.com/lucioduran/ax-cite/issues"
+  },
+  "keywords": [
+    "ax",
+    "ai",
+    "agent-experience",
+    "citation",
+    "web-component",
+    "custom-element",
+    "structured-data",
+    "llm",
+    "ai-extractable",
+    "lightweight",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "pretest": "npm run build",
+    "test": "node --test test/**/*.test.js",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.2",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "happy-dom": "^17.4.4",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  }
+}
