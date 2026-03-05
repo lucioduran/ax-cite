@@ -205,11 +205,13 @@ export class AxCite extends HTMLElement {
     this.innerHTML = '';
     this.appendChild(aside);
 
-    this.dispatchEvent(
-      new CustomEvent('ax-cite:render', {
-        bubbles: true,
-        detail: this.toJSON(),
-      }),
-    );
+    if (typeof CustomEvent === 'function') {
+      this.dispatchEvent(
+        new CustomEvent('ax-cite:render', {
+          bubbles: true,
+          detail: this.toJSON(),
+        }),
+      );
+    }
   }
 }
