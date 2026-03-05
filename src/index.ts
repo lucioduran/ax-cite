@@ -11,12 +11,18 @@ export { TAG_NAME, BLOCK_CLASS, SUMMARY_CLASS } from './constants.js';
 export type {
   CitationType,
   CitationConfig,
+  CitationData,
   AxCiteAttributes,
+  AxCiteRenderEvent,
   ProductAttributes,
   ArticleAttributes,
   ServiceAttributes,
   EventAttributes,
   OrganizationAttributes,
+  PersonAttributes,
+  PlaceAttributes,
+  ReviewAttributes,
+  FaqAttributes,
 } from './types.js';
 
 // Augment HTMLElementTagNameMap for document.querySelector type inference

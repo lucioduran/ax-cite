@@ -1,5 +1,15 @@
 /** Supported citation content types. */
-export type CitationType = 'product' | 'article' | 'service' | 'event' | 'organization' | 'generic';
+export type CitationType =
+  | 'product'
+  | 'article'
+  | 'service'
+  | 'event'
+  | 'organization'
+  | 'person'
+  | 'place'
+  | 'review'
+  | 'faq'
+  | 'generic';
 
 export interface ProductAttributes {
   sku?: string;
@@ -36,21 +46,62 @@ export interface OrganizationAttributes {
   headquarters?: string;
 }
 
+export interface PersonAttributes {
+  role?: string;
+  affiliation?: string;
+  email?: string;
+  url?: string;
+}
+
+export interface PlaceAttributes {
+  address?: string;
+  latitude?: string;
+  longitude?: string;
+  country?: string;
+}
+
+export interface ReviewAttributes {
+  rating?: string;
+  reviewer?: string;
+  'max-rating'?: string;
+  subject?: string;
+}
+
+export interface FaqAttributes {
+  question?: string;
+  answer?: string;
+  category?: string;
+}
+
 export type KnownAttributeName =
   | keyof ProductAttributes
   | keyof ArticleAttributes
   | keyof ServiceAttributes
   | keyof EventAttributes
-  | keyof OrganizationAttributes;
+  | keyof OrganizationAttributes
+  | keyof PersonAttributes
+  | keyof PlaceAttributes
+  | keyof ReviewAttributes
+  | keyof FaqAttributes;
 
 /** Resolved configuration from the element's attributes. */
 export interface CitationConfig {
   type: CitationType;
   name?: string;
   summary?: string;
+  sourceUrl?: string;
   unstyled: boolean;
+  axHidden: boolean;
   attributes: Record<string, string>;
   extraData: Record<string, string>;
+}
+
+/** Detail payload for the `ax-cite:render` custom event. */
+export type CitationData = Record<string, string>;
+
+/** Custom event dispatched when an ax-cite element renders. */
+export interface AxCiteRenderEvent extends CustomEvent<CitationData> {
+  readonly detail: CitationData;
 }
 
 /** React/Preact JSX props for <ax-cite>. */
@@ -60,6 +111,8 @@ export interface AxCiteAttributes {
   summary?: string;
   data?: string;
   unstyled?: boolean | string;
+  'source-url'?: string;
+  'ax-hidden'?: boolean | string;
 
   // Product
   sku?: string;
@@ -91,9 +144,33 @@ export interface AxCiteAttributes {
   founded?: string;
   headquarters?: string;
 
+  // Person
+  role?: string;
+  affiliation?: string;
+  email?: string;
+  url?: string;
+
+  // Place
+  address?: string;
+  latitude?: string;
+  longitude?: string;
+  country?: string;
+
+  // Review
+  rating?: string;
+  reviewer?: string;
+  'max-rating'?: string;
+  subject?: string;
+
+  // FAQ
+  question?: string;
+  answer?: string;
+  // category already listed under Product
+
   // Standard HTML
   class?: string;
   id?: string;
+  lang?: string;
   style?: string | Record<string, string>;
   children?: unknown;
 }

@@ -1,5 +1,6 @@
-import type { CitationType, CitationConfig } from './types.js';
+import type { CitationType, CitationConfig, CitationData } from './types.js';
 import {
+  TAG_NAME,
   BLOCK_CLASS,
   SUMMARY_CLASS,
   EXTRACTABLE_ATTR,
@@ -63,6 +64,33 @@ export class AxCite extends HTMLElement {
     else this.setAttribute('summary', value);
   }
 
+  // ─── Public Methods ────────────────────────────────────────
+
+  /** Return the citation data as a plain object. */
+  toJSON(): CitationData {
+    const config = this._resolveConfig();
+    const result: CitationData = { type: config.type };
+
+    if (config.name) result.name = config.name;
+    if (config.summary) result.summary = config.summary;
+    if (config.sourceUrl) result['source-url'] = config.sourceUrl;
+
+    for (const [key, value] of Object.entries(config.attributes)) {
+      result[key] = value;
+    }
+    for (const [key, value] of Object.entries(config.extraData)) {
+      result[key] = value;
+    }
+
+    return result;
+  }
+
+  /** Extract all `<ax-cite>` elements from a root and return their data. */
+  static extractAll(root: ParentNode = document): CitationData[] {
+    const elements = root.querySelectorAll<AxCite>(TAG_NAME);
+    return Array.from(elements).map((el) => el.toJSON());
+  }
+
   // ─── Private ────────────────────────────────────────────────
 
   private static _injectStyles(): void {
@@ -83,7 +111,9 @@ export class AxCite extends HTMLElement {
     const type = this.type;
     const name = this.getAttribute('name') ?? undefined;
     const summary = this.getAttribute('summary') ?? undefined;
+    const sourceUrl = this.getAttribute('source-url') ?? undefined;
     const unstyled = this.hasAttribute('unstyled');
+    const axHidden = this.hasAttribute('ax-hidden');
 
     // Collect all known type-specific attributes that are set
     const allKnown = new Set(Object.values(TYPE_ATTRIBUTES).flat());
@@ -111,7 +141,7 @@ export class AxCite extends HTMLElement {
       }
     }
 
-    return { type, name, summary, unstyled, attributes, extraData };
+    return { type, name, summary, sourceUrl, unstyled, axHidden, attributes, extraData };
   }
 
   private _buildDataAttributes(config: CitationConfig): Array<[string, string]> {
@@ -122,6 +152,10 @@ export class AxCite extends HTMLElement {
 
     if (config.name) {
       entries.push(['data-name', config.name]);
+    }
+
+    if (config.sourceUrl) {
+      entries.push(['data-source-url', config.sourceUrl]);
     }
 
     for (const [key, value] of Object.entries(config.attributes)) {
@@ -149,6 +183,18 @@ export class AxCite extends HTMLElement {
       aside.setAttribute(attr, value);
     }
 
+    // Propagate lang to the inner aside
+    const lang = this.getAttribute('lang');
+    if (lang) {
+      aside.setAttribute('lang', lang);
+    }
+
+    // Hidden mode: aside stays in DOM for crawlers but is invisible
+    if (config.axHidden) {
+      aside.setAttribute('aria-hidden', 'true');
+      aside.style.display = 'none';
+    }
+
     if (config.summary) {
       const p = document.createElement('p');
       p.className = SUMMARY_CLASS;
@@ -158,5 +204,12 @@ export class AxCite extends HTMLElement {
 
     this.innerHTML = '';
     this.appendChild(aside);
+
+    this.dispatchEvent(
+      new CustomEvent('ax-cite:render', {
+        bubbles: true,
+        detail: this.toJSON(),
+      }),
+    );
   }
 }

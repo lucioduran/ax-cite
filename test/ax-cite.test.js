@@ -240,6 +240,239 @@ describe('ax-cite', () => {
     });
   });
 
+  // ─── Person Attributes ─────────────────────────────────────
+
+  describe('person attributes', () => {
+    it('should reflect role as data-role', () => {
+      const el = createElement(document, { type: 'person', name: 'Jane Doe', role: 'CEO' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-role'), 'CEO');
+    });
+
+    it('should reflect affiliation as data-affiliation', () => {
+      const el = createElement(document, { type: 'person', affiliation: 'Acme Corp' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-affiliation'), 'Acme Corp');
+    });
+
+    it('should reflect url as data-url', () => {
+      const el = createElement(document, { type: 'person', url: 'https://example.com' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-url'), 'https://example.com');
+    });
+  });
+
+  // ─── Place Attributes ─────────────────────────────────────
+
+  describe('place attributes', () => {
+    it('should reflect address as data-address', () => {
+      const el = createElement(document, { type: 'place', address: '123 Main St' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-address'), '123 Main St');
+    });
+
+    it('should reflect latitude and longitude', () => {
+      const el = createElement(document, { type: 'place', latitude: '-34.9', longitude: '-56.1' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-latitude'), '-34.9');
+      assert.equal(aside.getAttribute('data-longitude'), '-56.1');
+    });
+
+    it('should reflect country as data-country', () => {
+      const el = createElement(document, { type: 'place', country: 'Uruguay' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-country'), 'Uruguay');
+    });
+  });
+
+  // ─── Review Attributes ────────────────────────────────────
+
+  describe('review attributes', () => {
+    it('should reflect rating and max-rating', () => {
+      const el = createElement(document, { type: 'review', rating: '4.5', 'max-rating': '5' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-rating'), '4.5');
+      assert.equal(aside.getAttribute('data-max-rating'), '5');
+    });
+
+    it('should reflect reviewer as data-reviewer', () => {
+      const el = createElement(document, { type: 'review', reviewer: 'John' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-reviewer'), 'John');
+    });
+
+    it('should reflect subject as data-subject', () => {
+      const el = createElement(document, { type: 'review', subject: 'Great product' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-subject'), 'Great product');
+    });
+  });
+
+  // ─── FAQ Attributes ───────────────────────────────────────
+
+  describe('faq attributes', () => {
+    it('should reflect question and answer', () => {
+      const el = createElement(document, { type: 'faq', question: 'What is it?', answer: 'A widget' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-question'), 'What is it?');
+      assert.equal(aside.getAttribute('data-answer'), 'A widget');
+    });
+
+    it('should reflect category as data-category', () => {
+      const el = createElement(document, { type: 'faq', category: 'General' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-category'), 'General');
+    });
+  });
+
+  // ─── source-url Attribute ─────────────────────────────────
+
+  describe('source-url attribute', () => {
+    it('should reflect source-url as data-source-url', () => {
+      const el = createElement(document, { type: 'product', 'source-url': 'https://shop.example.com/item/1' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-source-url'), 'https://shop.example.com/item/1');
+    });
+
+    it('should include source-url in toJSON output', () => {
+      const el = createElement(document, { type: 'product', 'source-url': 'https://example.com' });
+      const json = el.toJSON();
+      assert.equal(json['source-url'], 'https://example.com');
+    });
+  });
+
+  // ─── ax-hidden Mode ───────────────────────────────────────
+
+  describe('ax-hidden mode', () => {
+    it('should render aside with display:none when ax-hidden is set', () => {
+      const el = createElement(document, { type: 'product', 'ax-hidden': '', summary: 'Hidden' });
+      const aside = el.querySelector('aside');
+      assert.ok(aside);
+      assert.equal(aside.getAttribute('aria-hidden'), 'true');
+      assert.equal(aside.style.display, 'none');
+    });
+
+    it('should still have data-ai-extractable when hidden', () => {
+      const el = createElement(document, { type: 'product', 'ax-hidden': '', name: 'Secret' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('data-ai-extractable'), 'true');
+      assert.equal(aside.getAttribute('data-name'), 'Secret');
+    });
+
+    it('should render normally without ax-hidden', () => {
+      const el = createElement(document, { type: 'product', summary: 'Visible' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('aria-hidden'), null);
+    });
+  });
+
+  // ─── toJSON Method ────────────────────────────────────────
+
+  describe('toJSON()', () => {
+    it('should return citation data as a plain object', () => {
+      const el = createElement(document, {
+        type: 'product',
+        name: 'Widget',
+        price: 'USD 10',
+        summary: 'A widget',
+      });
+      const json = el.toJSON();
+      assert.equal(json.type, 'product');
+      assert.equal(json.name, 'Widget');
+      assert.equal(json.price, 'USD 10');
+      assert.equal(json.summary, 'A widget');
+    });
+
+    it('should include JSON data keys', () => {
+      const data = JSON.stringify({ tier: 'premium' });
+      const el = createElement(document, { type: 'service', data });
+      const json = el.toJSON();
+      assert.equal(json.tier, 'premium');
+    });
+
+    it('should default type to generic', () => {
+      const el = createElement(document, {});
+      const json = el.toJSON();
+      assert.equal(json.type, 'generic');
+    });
+  });
+
+  // ─── extractAll Static Method ─────────────────────────────
+
+  describe('AxCite.extractAll()', () => {
+    it('should return all citations on the page', () => {
+      createElement(document, { type: 'product', name: 'A' });
+      createElement(document, { type: 'article', name: 'B' });
+      createElement(document, { type: 'person', name: 'C' });
+
+      const AxCite = globalThis.customElements.get('ax-cite');
+      const all = AxCite.extractAll(document);
+
+      assert.ok(all.length >= 3);
+      const names = all.map((c) => c.name);
+      assert.ok(names.includes('A'));
+      assert.ok(names.includes('B'));
+      assert.ok(names.includes('C'));
+    });
+  });
+
+  // ─── Custom Events ────────────────────────────────────────
+
+  describe('custom events', () => {
+    it('should dispatch ax-cite:render on creation', () => {
+      let received = null;
+      const el = document.createElement('ax-cite');
+      el.setAttribute('type', 'product');
+      el.setAttribute('name', 'Headphones');
+      el.addEventListener(
+        'ax-cite:render',
+        (e) => {
+          received = e.detail;
+        },
+        { once: true },
+      );
+      document.body.appendChild(el);
+
+      assert.ok(received);
+      assert.equal(received.type, 'product');
+      assert.equal(received.name, 'Headphones');
+    });
+
+    it('should dispatch ax-cite:render on attribute change', () => {
+      const el = createElement(document, { type: 'product', name: 'Old' });
+
+      let received = null;
+      el.addEventListener(
+        'ax-cite:render',
+        (e) => {
+          received = e.detail;
+        },
+        { once: true },
+      );
+
+      el.setAttribute('name', 'New');
+
+      assert.ok(received);
+      assert.equal(received.name, 'New');
+    });
+  });
+
+  // ─── Lang Propagation ────────────────────────────────────
+
+  describe('lang propagation', () => {
+    it('should propagate lang to the inner aside', () => {
+      const el = createElement(document, { type: 'product', lang: 'es', summary: 'Hola' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('lang'), 'es');
+    });
+
+    it('should not set lang on aside when not specified', () => {
+      const el = createElement(document, { type: 'product' });
+      const aside = el.querySelector('aside');
+      assert.equal(aside.getAttribute('lang'), null);
+    });
+  });
+
   // ─── Full Integration ──────────────────────────────────────
 
   describe('full integration', () => {

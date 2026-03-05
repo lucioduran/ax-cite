@@ -147,6 +147,38 @@ document.body.appendChild(el);
 </ax-cite>
 ```
 
+### Person
+
+```html
+<ax-cite type="person" name="..." role="..." affiliation="..."
+         email="..." url="..." summary="...">
+</ax-cite>
+```
+
+### Place
+
+```html
+<ax-cite type="place" name="..." address="..." latitude="..."
+         longitude="..." country="..." summary="...">
+</ax-cite>
+```
+
+### Review
+
+```html
+<ax-cite type="review" name="..." rating="..." max-rating="..."
+         reviewer="..." subject="..." summary="...">
+</ax-cite>
+```
+
+### FAQ
+
+```html
+<ax-cite type="faq" name="..." question="..." answer="..."
+         category="..." summary="...">
+</ax-cite>
+```
+
 ### Generic (with JSON data)
 
 ```html
@@ -180,25 +212,96 @@ To disable all default styles:
 <ax-cite unstyled type="product" ...></ax-cite>
 ```
 
+## Hidden Mode
+
+Use `ax-hidden` to embed machine-readable data without any visible output. The `<aside>` is still present in the DOM (for AI crawlers) but hidden from users.
+
+```html
+<ax-cite ax-hidden type="product" name="Widget" price="USD 10"
+         summary="Widget available at USD 10.">
+</ax-cite>
+```
+
+## Source Attribution
+
+Add `source-url` to any citation to link back to the original data source:
+
+```html
+<ax-cite type="article" name="AI Trends" author="Jane Doe"
+         source-url="https://example.com/ai-trends"
+         summary="An article about AI trends.">
+</ax-cite>
+```
+
+## Programmatic API
+
+### `toJSON()`
+
+Extract citation data as a plain object:
+
+```typescript
+const el = document.querySelector('ax-cite');
+console.log(el.toJSON());
+// { type: 'product', name: 'Widget', price: 'USD 10', ... }
+```
+
+### `AxCite.extractAll(root?)`
+
+Extract all citations from a page (or a subtree):
+
+```typescript
+import { AxCite } from 'ax-cite';
+
+const all = AxCite.extractAll();
+// [{ type: 'product', ... }, { type: 'article', ... }]
+
+// Or scope to a container:
+const section = document.getElementById('products');
+const products = AxCite.extractAll(section);
+```
+
+### Events
+
+The component dispatches `ax-cite:render` (bubbles) whenever it renders or updates:
+
+```typescript
+document.addEventListener('ax-cite:render', (e) => {
+  console.log('Citation rendered:', e.detail);
+});
+```
+
 ## API
 
 ### Attributes
 
 | Attribute | Description |
 |-----------|-------------|
-| `type` | Citation type: `product`, `article`, `service`, `event`, `organization`, `generic` |
+| `type` | Citation type: `product`, `article`, `service`, `event`, `organization`, `person`, `place`, `review`, `faq`, `generic` |
 | `name` | Content name |
 | `summary` | Human-readable summary text |
 | `data` | JSON object with arbitrary key-value pairs |
+| `source-url` | URL of the original data source |
 | `unstyled` | Boolean attribute to disable default styles |
+| `ax-hidden` | Boolean attribute to hide the citation visually (still in DOM) |
+| `lang` | Language code propagated to the inner `<aside>` |
 
 Plus type-specific attributes listed above.
+
+### Methods
+
+| Method | Description |
+|--------|-------------|
+| `toJSON()` | Returns citation data as a plain `Record<string, string>` |
+| `AxCite.extractAll(root?)` | Static. Returns all citation data from `root` (defaults to `document`) |
 
 ### Exports
 
 ```typescript
 import { AxCite, TAG_NAME, BLOCK_CLASS, SUMMARY_CLASS } from 'ax-cite';
-import type { CitationType, CitationConfig, AxCiteAttributes } from 'ax-cite';
+import type {
+  CitationType, CitationConfig, CitationData,
+  AxCiteAttributes, AxCiteRenderEvent,
+} from 'ax-cite';
 ```
 
 ## How It Works
