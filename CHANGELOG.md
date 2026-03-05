@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Fix Prettier formatting for CI compatibility
+- Guard `CustomEvent` dispatch for Node 18 environments
+
 ## 1.1.0
 
 - New citation types: `person`, `place`, `review`, `faq`
