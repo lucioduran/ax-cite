@@ -6,7 +6,16 @@ export const SUMMARY_CLASS = 'ai-summary';
 export const EXTRACTABLE_ATTR = 'true';
 
 /** Core attributes that are not reflected as data-* on the aside. */
-export const META_ATTRIBUTES = ['type', 'name', 'summary', 'data', 'unstyled', 'source-url', 'ax-hidden', 'lang'] as const;
+export const META_ATTRIBUTES = [
+  'type',
+  'name',
+  'summary',
+  'data',
+  'unstyled',
+  'source-url',
+  'ax-hidden',
+  'lang',
+] as const;
 
 /** Map of citation types to their recognized attribute names. */
 export const TYPE_ATTRIBUTES: Record<CitationType, readonly KnownAttributeName[]> = {
