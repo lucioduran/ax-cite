@@ -12,6 +12,7 @@ export function setupDOM() {
   globalThis.document = document;
   globalThis.HTMLElement = window.HTMLElement;
   globalThis.customElements = window.customElements;
+  globalThis.CustomEvent = window.CustomEvent;
 
   return { window, document };
 }
