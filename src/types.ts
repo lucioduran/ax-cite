@@ -113,6 +113,7 @@ export interface AxCiteAttributes {
   unstyled?: boolean | string;
   'source-url'?: string;
   'ax-hidden'?: boolean | string;
+  jsonld?: boolean | string;
 
   // Product
   sku?: string;

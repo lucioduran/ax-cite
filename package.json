@@ -1,13 +1,13 @@
 {
   "name": "ax-cite",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Ultra-lightweight web component for AI-extractable citation blocks. Part of the AX (AI Agent Experience) ecosystem.",
   "type": "module",
   "license": "Apache-2.0",
   "author": "Lucio Duran <email@lucioduran.com> (https://lucioduran.com)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucioduran/ax-cite.git"
+    "url": "git+https://github.com/lucioduran/ax-cite.git"
   },
   "homepage": "https://github.com/lucioduran/ax-cite#readme",
   "bugs": {
@@ -45,7 +45,7 @@
   "scripts": {
     "build": "tsc",
     "pretest": "npm run build",
-    "test": "node --test test/ax-cite.test.js",
+    "test": "node --test test/*.test.js",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.ts\"",

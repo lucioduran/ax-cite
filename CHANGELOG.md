@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+
+- **JSON-LD output**: add `jsonld` attribute to inject `<script type="application/ld+json">` with schema.org structured data alongside the visual citation
+- Maps all 10 citation types to schema.org equivalents (Product, Article, Service, Event, Organization, Person, Place, Review, FAQPage, Thing)
+- Attribute-specific mappings: price/currency/in-stock merge into Offer, author becomes Person, location becomes Place, rating becomes Rating, etc.
+- JSON-LD updates reactively on attribute changes and is removed when the `jsonld` attribute is removed
+- 42 new tests covering all type mappings, attribute merging, edge cases, and dynamic updates
+
 ## 1.1.1
 
 - Fix Prettier formatting for CI compatibility

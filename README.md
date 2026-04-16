@@ -222,6 +222,39 @@ Use `ax-hidden` to embed machine-readable data without any visible output. The `
 </ax-cite>
 ```
 
+## JSON-LD Output
+
+Add the `jsonld` attribute to automatically inject a `<script type="application/ld+json">` tag alongside the visual citation. The component maps each citation type to its schema.org equivalent:
+
+```html
+<ax-cite jsonld type="product" name="Espresso Machine" price="239"
+         currency="USD" brand="NAPPO" in-stock="true"
+         summary="Available at USD 239.">
+</ax-cite>
+```
+
+Renders the usual `<aside>` **plus**:
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Espresso Machine",
+  "description": "Available at USD 239.",
+  "sku": null,
+  "offers": { "@type": "Offer", "price": "239", "priceCurrency": "USD", "availability": "https://schema.org/InStock" },
+  "brand": { "@type": "Brand", "name": "NAPPO" }
+}
+</script>
+```
+
+Type mapping: `product`→`Product`, `article`→`Article`, `service`→`Service`, `event`→`Event`, `organization`→`Organization`, `person`→`Person`, `place`→`Place`, `review`→`Review`, `faq`→`FAQPage`, `generic`→`Thing`.
+
+Attribute-specific mappings follow schema.org conventions (e.g., `author` becomes `{"@type": "Person", "name": "..."}`, `price`/`currency`/`in-stock` merge into a single `Offer` object).
+
+Remove the `jsonld` attribute to stop generating the script tag.
+
 ## Source Attribution
 
 Add `source-url` to any citation to link back to the original data source:
@@ -283,6 +316,7 @@ document.addEventListener('ax-cite:render', (e) => {
 | `source-url` | URL of the original data source |
 | `unstyled` | Boolean attribute to disable default styles |
 | `ax-hidden` | Boolean attribute to hide the citation visually (still in DOM) |
+| `jsonld` | Boolean attribute to inject a `<script type="application/ld+json">` with schema.org structured data |
 | `lang` | Language code propagated to the inner `<aside>` |
 
 Plus type-specific attributes listed above.
@@ -316,7 +350,7 @@ import type {
 ## Tech Stack
 
 - **Zero** runtime dependencies
-- **~2.8KB** gzipped (all files)
+- **~3.2KB** gzipped (all files)
 - Vanilla Custom Element (no framework)
 - TypeScript strict mode
 - ESM-only

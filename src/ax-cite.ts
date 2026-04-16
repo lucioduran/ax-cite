@@ -9,6 +9,7 @@ import {
   DEFAULT_ARIA_LABEL,
 } from './constants.js';
 import { DEFAULT_STYLES, STYLE_ID } from './styles.js';
+import { buildJsonLd } from './jsonld.js';
 
 export class AxCite extends HTMLElement {
   static get observedAttributes(): readonly string[] {
@@ -204,6 +205,15 @@ export class AxCite extends HTMLElement {
 
     this.innerHTML = '';
     this.appendChild(aside);
+
+    // Inject JSON-LD script when the jsonld attribute is present
+    if (this.hasAttribute('jsonld')) {
+      const jsonLd = buildJsonLd(config);
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(jsonLd);
+      this.appendChild(script);
+    }
 
     if (typeof CustomEvent === 'function') {
       this.dispatchEvent(

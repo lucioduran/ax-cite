@@ -15,6 +15,7 @@ export const META_ATTRIBUTES = [
   'source-url',
   'ax-hidden',
   'lang',
+  'jsonld',
 ] as const;
 
 /** Map of citation types to their recognized attribute names. */
